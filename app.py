@@ -6,6 +6,7 @@ time = input('Enter time frame in years: ')
 expected = input('ENTER Return Investment: ')
 risk = input('Risk Facotr: ')
 print
+print "Risk : Low"
 
 
 lowest = {
@@ -87,7 +88,7 @@ def investor(age , initial , time,expected  , risk):
 
 
     expectedRate = (((expected * 1.0) / initial) ** (1.0 / time) - 1 ) * 100
-    # print expectedRate
+    print "Return:" , expectedRate
 
 
     def findRates(age , risk , time) :
@@ -103,46 +104,66 @@ def investor(age , initial , time,expected  , risk):
 
 
     results = findRates(age ,  risk , time )
-    mean = 0
+    # mean = 0
     ans = []
+    mini = 10000
+    maxi = 0
+    # print results
     for i in results :
         # print i
         temp = i[1]
         if '+' in temp :
-            ll = int(temp[:-1])
-            rate = int(ll)
-            ul = 1000
+            ul = int(temp[:-1]) + 2
+            rate = int(ul - 2)
+            ll = 0
+            if maxi < ul :
+                maxi = ul
+
         elif '--' in temp :
             ll , ul = map(int , temp.split('--') )
             rate = (int(ll) + int(ul)) / 2.0
+            if ll < mini :
+                mini = ll
+            if ul > maxi :
+                maxi = ul
+
+
         else :
             print "Rate not Recognized " , temp
             exit(1)
-        mean += rate
+        # mean += rate
         # print ll , ul
+
         if expectedRate >=  ll  and expectedRate <= ul :
             ans.append([ rate , i[0]])
         elif ll > expectedRate :
             ans.append([int(ll), i[0]])
 
-    mean = mean * 1.0 / len(results)
-
+    # mean = mean * 1.0 / len(results)
+    #
     # print mean
+    # print mini, maxi
 
 
+
+    # print ans
     if ans == [] :
-        if mean < expectedRate :
+        if maxi < expectedRate :
             if risk == 'LOW' :
+                print "Low to Medium"
                 investor(age, initial , time  , expected , 3)
             elif risk == 'MEDIUM' :
+                print "Medium to High"
                 investor(age, initial, time, expected, 5)
             else :
                 print "No Products Found"
                 exit(1)
         else :
             if risk == 'HIGH':
+                print "High to Med"
                 investor(age, initial, time, expected, 3)
             elif risk == 'MEDIUM':
+                print "Med to Low"
                 investor(age, initial, time, expected, 1)
             else:
                 print "No Products Found"
@@ -171,8 +192,8 @@ def investor(age , initial , time,expected  , risk):
     if low or high :
         if high :
             if risk == 'MEDIUM' :
-                investor(age , initial , time , expected , 1)
-            elif risk == 'HIGH' :
+                investor(age , initial , time , expected , 5)
+            elif risk == 'LOW' :
                 investor(age, initial, time, expected, 3)
             else :
                 for i in range(1 , min(5 , len(ans) + 1)) :
